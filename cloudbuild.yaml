@@ -3,7 +3,7 @@ options:
 steps:
   - id: go_test
     name: "gcr.io/cloud-builders/go"
-    args: ["test","./..."]
+    args: ["test","./...."]
 
 timeout: 1800s
 logsBucket: '${_CLOUD_BUILD_STORAGE_BUCKET}'
