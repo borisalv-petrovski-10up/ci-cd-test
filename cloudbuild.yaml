@@ -1,4 +1,11 @@
 options:
+  volumes:
+    - name: go-modules-pkg
+      path: /go/pkg
+    - name: go-modules-bin
+      path: /go/bin
+    - name: go-modules-src
+      path: /go/src
   machineType: 'E2_HIGHCPU_8'
 steps:
   - id: go_test
