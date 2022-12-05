@@ -1,7 +1,6 @@
 options:
-  options:
-    env:
-      - "GOPATH=/go"
+  env:
+    - "GOPATH=/go"
   machineType: 'E2_HIGHCPU_8'
 steps:
   - id: go_test
