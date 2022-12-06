@@ -7,6 +7,6 @@ import (
 )
 
 func main() {
-	http.HandleFunc("/", handlers.UniqueNames)
+	http.HandleFunc("/a", handlers.UniqueNames)
 	http.ListenAndServe(":8080", nil)
 }
