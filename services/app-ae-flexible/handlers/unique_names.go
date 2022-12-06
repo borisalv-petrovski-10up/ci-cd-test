@@ -8,6 +8,6 @@ import (
 )
 
 func UniqueNames(w http.ResponseWriter, r *http.Request) {
-	names := lo.Uniq[string]([]string{"Samuel", "John", "Samuel", "Falco"})
+	names := lo.Uniq[string]([]string{"Samuel", "John", "Samuel", "Falcooo"})
 	fmt.Fprintf(w, "Hello, %v!", names)
 }

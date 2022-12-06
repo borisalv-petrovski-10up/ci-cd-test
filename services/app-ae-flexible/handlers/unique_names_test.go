@@ -19,5 +19,5 @@ func TestRegisterUser(t *testing.T) {
 	handlers.UniqueNames(res, req)
 
 	// Assert
-	assert.Equal(t, "Hello, [Samuel John Falco]!", res.Body.String())
+	assert.Equal(t, "Hello, [Samuel John Falcooo]!", res.Body.String())
 }
