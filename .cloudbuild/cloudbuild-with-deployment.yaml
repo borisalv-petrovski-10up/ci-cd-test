@@ -1,6 +1,8 @@
 options:
   env:
     - "GOPATH=/go"
+    - "BRANCH_NAME=${BRANCH_NAME}"
+    - "PROJECT_ID=${PROJECT_ID}"
   volumes:
     - name: go-modules-pkg
       path: /go/pkg
@@ -11,6 +13,7 @@ options:
   machineType: 'E2_HIGHCPU_8'
 substitutions:
   _GCR_REPO_ENDPOINT: eu.gcr.io/sk-borislav/flexible:latest
+  _VULNZ_CHECK_POLICY: .cloudbuild/docker/vulnerability_scan_policy.yaml
 steps:
   - id: go_version
     name: "gcr.io/cloud-builders/go:debian"
@@ -20,7 +23,7 @@ steps:
     name: "golang:1.19"
     args: ["go", "test", "./..."]
 
-  - id: build-service
+  - id: build_flexible_service
     name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
     args:
@@ -28,7 +31,26 @@ steps:
       - |
         docker build -t ${_GCR_REPO_ENDPOINT} -f Dockerfile .
 
-  - id: deploy-service
+  - id: push_flexible_service
+    name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - -ce
+      - |
+        docker push ${_GCR_REPO_ENDPOINT}
+        docker image inspect ${_GCR_REPO_ENDPOINT} --format '{{index .RepoDigests 0}}' > flexible-service-image-digest.txt
+        cat flexible-service-image-digest.txt
+
+  - id: sign_flexible_service
+    name: 'eu.gcr.io/sk-borislav/ci-image-signer'
+    env:
+      - "DIGEST_FILENAME=flexible-service-image-digest.txt"
+      - "VULNZ_CHECK_POLICY=${_VULNZ_CHECK_POLICY}"
+      - "KMS_DIGEST_ALGORITHM=${_KMS_DIGEST_ALGORITHM}"
+      - "KMS_KEY_NAME=${_KMS_KEY_NAME}"
+      - "ATTESTOR_NAME=${_ATTESTOR_NAME}"
+
+  - id: deploy_service
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'bash'
     args:
