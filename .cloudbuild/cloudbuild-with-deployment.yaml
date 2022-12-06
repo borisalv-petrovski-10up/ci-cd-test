@@ -1,0 +1,42 @@
+options:
+  env:
+    - "GOPATH=/go"
+  volumes:
+    - name: go-modules-pkg
+      path: /go/pkg
+    - name: go-modules-bin
+      path: /go/bin
+    - name: go-modules-src
+      path: /go/src
+  machineType: 'E2_HIGHCPU_8'
+substitutions:
+  _GCR_REPO_ENDPOINT: eu.gcr.io/sk-borislav/flexible:latest
+steps:
+  - id: go_version
+    name: "gcr.io/cloud-builders/go:debian"
+    args: [ "version" ]
+
+  - id: go_test
+    name: "golang:1.19"
+    args: ["go", "test", "./..."]
+
+  - id: build-service
+    name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-ce'
+      - |
+        docker build -t ${_GCR_REPO_ENDPOINT} -f Dockerfile .
+
+  - id: deploy-service
+    name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'bash'
+    args:
+      - -ce
+      - |
+        gcloud config set app/cloud_build_timeout 1600 
+        gcloud app deploy --image-url=${_GCR_REPO_ENDPOINT} --appyaml=services/app-ae-flexible/app.yaml
+
+
+timeout: 1800s
+logsBucket: '${_CLOUD_BUILD_STORAGE_BUCKET}'
