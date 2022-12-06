@@ -41,15 +41,6 @@ steps:
         docker image inspect ${_GCR_REPO_ENDPOINT} --format '{{index .RepoDigests 0}}' > flexible-service-image-digest.txt
         cat flexible-service-image-digest.txt
 
-  - id: sign_flexible_service
-    name: 'eu.gcr.io/sk-borislav/ci-image-signer'
-    env:
-      - "DIGEST_FILENAME=flexible-service-image-digest.txt"
-      - "VULNZ_CHECK_POLICY=${_VULNZ_CHECK_POLICY}"
-      - "KMS_DIGEST_ALGORITHM=${_KMS_DIGEST_ALGORITHM}"
-      - "KMS_KEY_NAME=${_KMS_KEY_NAME}"
-      - "ATTESTOR_NAME=${_ATTESTOR_NAME}"
-
   - id: deploy_service
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'bash'
