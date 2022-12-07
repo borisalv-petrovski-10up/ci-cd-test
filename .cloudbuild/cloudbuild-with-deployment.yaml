@@ -60,7 +60,6 @@ steps:
   - id: sign_flexible_service_image
     name: 'gcr.io/$PROJECT_ID/kritis-signer'
     entrypoint: bin/bash
-    waitFor: push_flexible_service
     args:
       - -c
       - |
