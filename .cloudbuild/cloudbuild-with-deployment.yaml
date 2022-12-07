@@ -67,8 +67,9 @@ steps:
         -v=10 \
         -alsologtostderr \
         -mode=check-only \
-        -image=$(/bin/cat flexible-service-image-digest.txt) \
+        -image=$(/bin/cat ${_FLEXIBLE_SERVICE_NAME}-image-digest.txt) \
         -policy=${_VULNZ_CHECK_POLICY}
+    waitFor: push_flexible_service
 
   - id: deploy_service
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -78,7 +79,6 @@ steps:
       - |
         gcloud config set app/cloud_build_timeout 1600 
         gcloud app deploy --image-url=${_GCR_REPO_ENDPOINT} --appyaml=services/app-ae-flexible/app.yaml
-
 
 timeout: 1800s
 logsBucket: '${_CLOUD_BUILD_STORAGE_BUCKET}'
