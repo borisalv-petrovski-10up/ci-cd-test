@@ -65,9 +65,9 @@ steps:
       - |
         /kritis/signer \
         -v=10 \
-        -mode=check-only \
         -alsologtostderr \
-        -image=$(/bin/cat ${_FLEXIBLE_SERVICE_NAME}-image-digest.txt) \
+        -mode=check-only \
+        -image=$(/bin/cat $_FLEXIBLE_SERVICE_NAME-image-digest.txt) \
         -policy=${_VULNZ_CHECK_POLICY}
 
   - id: deploy_service
