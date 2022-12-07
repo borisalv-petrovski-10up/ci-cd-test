@@ -10,6 +10,13 @@ options:
       path: /go/src
   machineType: 'E2_HIGHCPU_8'
 steps:
+  # See https://www.npmjs.com/package/editorconfig-checker
+  # The .editorconfig file enforces formatting standards such as whether indents
+  # should be tabs or spaces. Editors like VSCode will read the file and behave
+  # according to the formatting defined in this file.
+  - id: eclint
+    name: "e53e225/editorconfig-checker"
+
   - id: go_version
     name: "gcr.io/cloud-builders/go:debian"
     args: [ "version" ]

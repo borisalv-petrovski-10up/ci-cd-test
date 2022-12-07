@@ -1,0 +1,44 @@
+# More info on config here: https://github.com/golangci/golangci-lint#config-file
+run:
+  concurrency: 4
+  deadline: 10m
+  issues-exit-code: 1
+  tests: true
+  skip-dirs:
+    - bin
+    - tmp
+    - test
+    - vendor
+  build-tags:
+    - test
+
+output:
+  format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true
+
+linters-settings:
+  govet:
+    check-shadowing: true
+  golint:
+    min-confidence: 0
+  dupl:
+    threshold: 100
+  goconst:
+    min-len:         2
+    min-occurrences: 2
+  gosec:
+    audit: enabled
+    nosec: enabled
+  gocyclo:
+    min-complexity: 10
+
+linters:
+  enable:
+    - gosec
+    - gocyclo
+    - revive
+    - noctx
+    - gofmt
+    - testpackage
+    - misspell
