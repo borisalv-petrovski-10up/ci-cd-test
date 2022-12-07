@@ -60,16 +60,16 @@ steps:
   - id: sign_flexible_service_image
     name: 'gcr.io/$PROJECT_ID/kritis-signer'
     entrypoint: bin/bash
+    waitFor: push_flexible_service
     args:
       - -c
       - |
         /kritis/signer \
         -v=10 \
         -alsologtostderr \
-        -mode=check-only \
         -image=$(/bin/cat ${_FLEXIBLE_SERVICE_NAME}-image-digest.txt) \
-        -policy=${_VULNZ_CHECK_POLICY}
-    waitFor: ['push_flexible_service']
+        -policy=${_VULNZ_CHECK_POLICY} \
+        -mode=check-only
 
   - id: deploy_service
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
