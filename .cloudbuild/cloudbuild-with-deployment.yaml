@@ -59,9 +59,9 @@ steps:
 
   - id: sign_flexible_service_image
     name: 'gcr.io/$PROJECT_ID/kritis-signer'
-    entrypoint: 'bash'
+    entrypoint: bin/bash
     args:
-      - -ce
+      - -c
       - |
         /kritis/signer \
         -v=10 \
