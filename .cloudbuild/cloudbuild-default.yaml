@@ -29,5 +29,9 @@ steps:
     name: "golang:1.19"
     args: ["go", "test", "./..."]
 
+  - id: go_security
+    name: "securego/gosec"
+    args: [ "./..." ]
+
 timeout: 1800s
 logsBucket: '${_CLOUD_BUILD_STORAGE_BUCKET}'
