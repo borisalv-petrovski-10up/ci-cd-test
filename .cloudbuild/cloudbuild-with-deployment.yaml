@@ -61,7 +61,7 @@ steps:
     name: 'gcr.io/$PROJECT_ID/kritis-signer'
     entrypoint: 'bash'
     args:
-      - -ce
+      - -c
       - |
         /kritis/signer \
         -v=10 \
