@@ -67,7 +67,7 @@ steps:
         -v=10 \
         -alsologtostderr \
         -image=$(/bin/cat image-digest.txt) \
-        -policy=policy-strict.yaml \
+        -policy=.cloudbuild/docker/vulnerability_scan_policy.yaml \
         -mode=check-only
     id: vulnsign
 
