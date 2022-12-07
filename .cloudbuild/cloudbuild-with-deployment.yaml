@@ -58,7 +58,7 @@ steps:
         cat ${_FLEXIBLE_SERVICE_NAME}-image-digest.txt
 
   - id: sign_flexible_service_image
-    name: 'gcr.io/$PROJECT_ID/kritis-signer'
+    name: gcr.io/$PROJECT_ID/kritis-signer
     entrypoint: bin/bash
     args:
       - -ce
