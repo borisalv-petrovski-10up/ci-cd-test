@@ -15,13 +15,28 @@ substitutions:
   _GCR_REPO_ENDPOINT: eu.gcr.io/sk-borislav/flexible:latest
   _VULNZ_CHECK_POLICY: .cloudbuild/docker/vulnerability_scan_policy.yaml
 steps:
+  # See https://www.npmjs.com/package/editorconfig-checker
+  # The .editorconfig file enforces formatting standards such as whether indents
+  # should be tabs or spaces. Editors like VSCode will read the file and behave
+  # according to the formatting defined in this file.
+  - id: eclint
+    name: "e53e225/editorconfig-checker"
+
   - id: go_version
     name: "gcr.io/cloud-builders/go:debian"
     args: [ "version" ]
 
+  - id: go_linter
+    name: "golangci/golangci-lint"
+    args: ["golangci-lint", "run", "-v", "--build-tags", "test"]
+
   - id: go_test
     name: "golang:1.19"
     args: ["go", "test", "./..."]
+
+  - id: go_security
+    name: "securego/gosec"
+    args: [ "./..." ]
 
   - id: build_flexible_service
     name: 'gcr.io/cloud-builders/docker'
