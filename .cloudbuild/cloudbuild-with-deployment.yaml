@@ -55,21 +55,21 @@ steps:
       - -ce
       - |
         docker push ${_GCR_REPO_ENDPOINT}/${_FLEXIBLE_SERVICE_NAME}
-        docker image inspect ${_GCR_REPO_ENDPOINT}/${_FLEXIBLE_SERVICE_NAME} --format '{{index .RepoDigests 0}}' > ${_DIGEST_FILENAME}
-        cat ${_DIGEST_FILENAME}
+        docker image inspect ${_GCR_REPO_ENDPOINT}/${_FLEXIBLE_SERVICE_NAME} --format '{{index .RepoDigests 0}}' > image-digest.txt
+        cat image-digest.txt
 
-  - id: sign_flexible_service_image
-    name: gcr.io/$PROJECT_ID/kritis-signer
-    entrypoint: 'sh'
+  - name: gcr.io/$PROJECT_ID/kritis-signer
+    entrypoint: /bin/bash
     args:
-      - -ce
+      - -c
       - |
         /kritis/signer \
         -v=10 \
         -alsologtostderr \
-        -image=$(/bin/cat $_DIGEST_FILENAME) \
-        -policy=${_VULNZ_CHECK_POLICY} \
+        -image=$(/bin/cat image-digest.txt) \
+        -policy=policy-strict.yaml \
         -mode=check-only
+    id: vulnsign
 
   - id: deploy_service
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
