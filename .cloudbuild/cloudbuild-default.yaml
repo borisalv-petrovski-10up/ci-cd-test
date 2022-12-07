@@ -14,6 +14,10 @@ steps:
     name: "gcr.io/cloud-builders/go:debian"
     args: [ "version" ]
 
+  - id: go_linter
+    name: "golangci/golangci-lint"
+    args: ["golangci-lint", "run", "-v", "--build-tags", "test"]
+
   - id: go_test
     name: "golang:1.19"
     args: ["go", "test", "./..."]
