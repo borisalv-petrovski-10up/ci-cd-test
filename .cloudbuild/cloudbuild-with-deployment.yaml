@@ -12,7 +12,8 @@ options:
       path: /go/src
   machineType: 'E2_HIGHCPU_8'
 substitutions:
-  _GCR_REPO_ENDPOINT: eu.gcr.io/sk-borislav/flexible:latest
+  _FLEXIBLE_SERVICE_NAME: flexible-service
+  _GCR_REPO_ENDPOINT: eu.gcr.io/sk-borislav
   _VULNZ_CHECK_POLICY: .cloudbuild/docker/vulnerability_scan_policy.yaml
 steps:
   # See https://www.npmjs.com/package/editorconfig-checker
@@ -42,9 +43,9 @@ steps:
     name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
     args:
-      - '-ce'
+      - -ce
       - |
-        docker build -t ${_GCR_REPO_ENDPOINT} -f Dockerfile .
+        docker build -t ${_GCR_REPO_ENDPOINT}/${_FLEXIBLE_SERVICE_NAME} -f Dockerfile .
 
   - id: push_flexible_service
     name: 'gcr.io/cloud-builders/docker'
@@ -52,9 +53,22 @@ steps:
     args:
       - -ce
       - |
-        docker push ${_GCR_REPO_ENDPOINT}
-        docker image inspect ${_GCR_REPO_ENDPOINT} --format '{{index .RepoDigests 0}}' > flexible-service-image-digest.txt
-        cat flexible-service-image-digest.txt
+        docker push ${_GCR_REPO_ENDPOINT}/${_FLEXIBLE_SERVICE_NAME}
+        docker image inspect ${_GCR_REPO_ENDPOINT}/${_FLEXIBLE_SERVICE_NAME} --format '{{index .RepoDigests 0}}' > ${_FLEXIBLE_SERVICE_NAME}-image-digest.txt
+        cat ${_FLEXIBLE_SERVICE_NAME}-image-digest.txt
+
+  - id: sign_flexible_service_image
+  - name: 'gcr.io/$PROJECT_ID/kritis-signer'
+    entrypoint: 'bash'
+    args:
+      - -ce
+      - |
+        /kritis/signer \
+        -v=10 \
+        -mode=check-only \
+        -alsologtostderr \
+        -image=$(/bin/cat ${_FLEXIBLE_SERVICE_NAME}-image-digest.txt) \
+        -policy=${VULNZ_CHECK_POLICY} \
 
   - id: deploy_service
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
