@@ -67,7 +67,7 @@ steps:
         -v=10 \
         -alsologtostderr \
         -mode=check-only \
-        -image=$(/bin/cat ${_FLEXIBLE_SERVICE_NAME}-image-digest.txt) \
+        -image=$(/bin/cat flexible-service-image-digest.txt) \
         -policy=${_VULNZ_CHECK_POLICY}
 
   - id: deploy_service
