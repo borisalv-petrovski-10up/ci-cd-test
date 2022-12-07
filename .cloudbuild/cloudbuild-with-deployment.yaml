@@ -55,8 +55,8 @@ steps:
       - -ce
       - |
         docker push ${_GCR_REPO_ENDPOINT}/${_FLEXIBLE_SERVICE_NAME}
-        docker image inspect ${_GCR_REPO_ENDPOINT}/${_FLEXIBLE_SERVICE_NAME} --format '{{index .RepoDigests 0}}' > image-digest.txt
-        cat image-digest.txt
+        docker image inspect ${_GCR_REPO_ENDPOINT}/${_FLEXIBLE_SERVICE_NAME} --format '{{index .RepoDigests 0}}' > ${_DIGEST_FILENAME}
+        cat ${_DIGEST_FILENAME}
 
   - name: gcr.io/$PROJECT_ID/kritis-signer
     entrypoint: /bin/bash
@@ -66,8 +66,8 @@ steps:
         /kritis/signer \
         -v=10 \
         -alsologtostderr \
-        -image=$(/bin/cat image-digest.txt) \
-        -policy=.cloudbuild/docker/vulnerability_scan_policy.yaml \
+        -image=$(/bin/cat ${_DIGEST_FILENAME}) \
+        -policy=${_VULNZ_CHECK_POLICY} \
         -mode=check-only
     id: vulnsign
 
