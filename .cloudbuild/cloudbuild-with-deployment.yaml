@@ -59,7 +59,7 @@ steps:
         cat ${_DIGEST_FILENAME}
 
   - id: sign_flexible_service
-    name: 'gcr.io/$PROJECT_ID/kritis-signer'
+    name: gcr.io/$PROJECT_ID/kritis-signer
     entrypoint: 'bash'
     args:
       - -c
