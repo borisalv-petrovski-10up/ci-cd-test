@@ -58,18 +58,31 @@ steps:
         docker image inspect ${_GCR_REPO_ENDPOINT}/${_FLEXIBLE_SERVICE_NAME} --format '{{index .RepoDigests 0}}' > ${_DIGEST_FILENAME}
         cat ${_DIGEST_FILENAME}
 
-  - name: gcr.io/$PROJECT_ID/kritis-signer
-    entrypoint: bin/bash
+  - id: sign_flexible_service
+    name: 'gcr.io/$PROJECT_ID/kritis-signer'
+    entrypoint: 'bash'
     args:
-      - -c
+      - -ce
       - |
         /kritis/signer \
         -v=10 \
         -alsologtostderr \
+        -mode=check-only \
         -image=$(/bin/cat ${_DIGEST_FILENAME}) \
-        -policy=${_VULNZ_CHECK_POLICY} \
-        -mode=check-only
-    id: vulnsign
+        -policy=${_VULNZ_CHECK_POLICY}
+
+#  - name: gcr.io/$PROJECT_ID/kritis-signer
+#    entrypoint: bin/bash
+#    args:
+#      - -c
+#      - |
+#        /kritis/signer \
+#        -v=10 \
+#        -alsologtostderr \
+#        -image=$(/bin/cat ${_DIGEST_FILENAME}) \
+#        -policy=${_VULNZ_CHECK_POLICY} \
+#        -mode=check-only
+#    id: vulnsign
 
   - id: deploy_service
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
