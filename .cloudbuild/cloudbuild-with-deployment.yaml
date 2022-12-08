@@ -69,7 +69,7 @@ steps:
         -image=$(/bin/cat ${_DIGEST_FILENAME}) \
         -policy=${_VULNZ_CHECK_POLICY} \
         -mode=check-only
-    id: sign_flexible_service
+    id: vulnsign
 
   - id: deploy_service
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
