@@ -58,8 +58,7 @@ steps:
         docker image inspect ${_GCR_REPO_ENDPOINT}/${_FLEXIBLE_SERVICE_NAME} --format '{{index .RepoDigests 0}}' > ${_DIGEST_FILENAME}
         cat ${_DIGEST_FILENAME}
 
-  - id: sign_flexible_service
-    name: gcr.io/$PROJECT_ID/kritis-signer
+  - name: gcr.io/$PROJECT_ID/kritis-signer
     entrypoint: bin/bash
     args:
       - -c
@@ -70,6 +69,7 @@ steps:
         -image=$(/bin/cat ${_DIGEST_FILENAME}) \
         -policy=${_VULNZ_CHECK_POLICY} \
         -mode=check-only
+    id: sign_flexible_service
 
   - id: deploy_service
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
