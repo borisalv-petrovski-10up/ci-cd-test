@@ -57,14 +57,11 @@ steps:
         docker image inspect ${_GCR_REPO_ENDPOINT}/${_FLEXIBLE_SERVICE} --format '{{index .RepoDigests 0}}' > ${_FLEXIBLE_SERVICE}-image-digest.txt
         cat ${_FLEXIBLE_SERVICE}-image-digest.txt
 
-  - id: sign_flexible_service
+  - id: check_vulnz_flexible_service
     name: 'gcr.io/$PROJECT_ID/cloud-builders/ci-image-signer'
     env:
       - "DIGEST_FILENAME=${_FLEXIBLE_SERVICE}-image-digest.txt"
       - "VULNZ_CHECK_POLICY=${_VULNZ_CHECK_POLICY}"
-      - "KMS_DIGEST_ALGORITHM=${_KMS_DIGEST_ALGORITHM}"
-      - "KMS_KEY_NAME=${_KMS_KEY_NAME}"
-      - "ATTESTOR_NAME=${_ATTESTOR_NAME}"
 
   - id: deploy_service
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
