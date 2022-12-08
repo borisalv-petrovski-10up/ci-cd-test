@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	http.HandleFunc("/a", handlers.UniqueNames)
+	http.HandleFunc("/", handlers.UniqueNames)
 
 	server := &http.Server{
 		Addr:              ":8080",
