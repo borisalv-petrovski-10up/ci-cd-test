@@ -12,8 +12,7 @@ options:
       path: /go/src
   machineType: 'E2_HIGHCPU_8'
 substitutions:
-  _FLEXIBLE_SERVICE_NAME: flexible-service
-  _DIGEST_FILENAME: flexible-service-image-digest.txt
+  _FLEXIBLE_SERVICE: flexible-service
   _GCR_REPO_ENDPOINT: eu.gcr.io/sk-borislav
   _VULNZ_CHECK_POLICY: .cloudbuild/docker/vulnerability_scan_policy.yaml
 steps:
@@ -46,7 +45,7 @@ steps:
     args:
       - -ce
       - |
-        docker build -t ${_GCR_REPO_ENDPOINT}/${_FLEXIBLE_SERVICE_NAME} -f Dockerfile .
+        docker build -t ${_GCR_REPO_ENDPOINT}/${_FLEXIBLE_SERVICE} -f Dockerfile .
 
   - id: push_flexible_service
     name: 'gcr.io/cloud-builders/docker'
@@ -54,35 +53,18 @@ steps:
     args:
       - -ce
       - |
-        docker push ${_GCR_REPO_ENDPOINT}/${_FLEXIBLE_SERVICE_NAME}
-        docker image inspect ${_GCR_REPO_ENDPOINT}/${_FLEXIBLE_SERVICE_NAME} --format '{{index .RepoDigests 0}}' > image-digest.txt
-        cat image-digest.txt
+        docker push ${_GCR_REPO_ENDPOINT}/${_FLEXIBLE_SERVICE}
+        docker image inspect ${_GCR_REPO_ENDPOINT}/${_FLEXIBLE_SERVICE} --format '{{index .RepoDigests 0}}' > ${_FLEXIBLE_SERVICE}-image-digest.txt
+        cat ${_FLEXIBLE_SERVICE}-image-digest.txt
 
-  - name: gcr.io/$PROJECT_ID/kritis-signer
-    entrypoint: /bin/bash
-    args:
-      - -c
-      - |
-        /kritis/signer \
-        -v=10 \
-        -alsologtostderr \
-        -image=$(/bin/cat image-digest.txt) \
-        -policy=.cloudbuild/docker/vulnerability_scan_policy.yaml \
-        -mode=check-only
-    id: vulnsign
-
-#  - name: gcr.io/$PROJECT_ID/kritis-signer
-#    entrypoint: bin/bash
-#    args:
-#      - -c
-#      - |
-#        /kritis/signer \
-#        -v=10 \
-#        -alsologtostderr \
-#        -image=$(/bin/cat ${_DIGEST_FILENAME}) \
-#        -policy=${_VULNZ_CHECK_POLICY} \
-#        -mode=check-only
-#    id: vulnsign
+  - id: sign_flexible_service
+    name: 'gcr.io/$PROJECT_ID/cloud-builders/ci-image-signer'
+    env:
+      - "DIGEST_FILENAME=${_FLEXIBLE_SERVICE}-image-digest.txt"
+      - "VULNZ_CHECK_POLICY=${_VULNZ_CHECK_POLICY}"
+      - "KMS_DIGEST_ALGORITHM=${_KMS_DIGEST_ALGORITHM}"
+      - "KMS_KEY_NAME=${_KMS_KEY_NAME}"
+      - "ATTESTOR_NAME=${_ATTESTOR_NAME}"
 
   - id: deploy_service
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -91,7 +73,7 @@ steps:
       - -ce
       - |
         gcloud config set app/cloud_build_timeout 1600 
-        gcloud app deploy --image-url=${_GCR_REPO_ENDPOINT}/${_FLEXIBLE_SERVICE_NAME} --appyaml=services/app-ae-flexible/app.yaml
+        gcloud app deploy --image-url=${_GCR_REPO_ENDPOINT}/${_FLEXIBLE_SERVICE} --appyaml=services/app-ae-flexible/app.yaml
 
 timeout: 1800s
 logsBucket: '${_CLOUD_BUILD_STORAGE_BUCKET}'
