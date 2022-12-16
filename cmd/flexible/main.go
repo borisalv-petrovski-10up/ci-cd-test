@@ -1,6 +1,7 @@
 package main
 
 import (
+	"html/template"
 	"net/http"
 	"time"
 
@@ -8,7 +9,14 @@ import (
 )
 
 func main() {
-	http.HandleFunc("/", handlers.UniqueNames)
+	tpl := template.Must(template.ParseGlob("./static/*.html"))
+	homepageHandler := handlers.NewHomepage(tpl)
+
+	fs := http.FileServer(http.Dir("static"))
+	http.Handle("/static/", http.StripPrefix("/static", fs))
+
+	http.HandleFunc("/", homepageHandler.HomepageHandler)
+	http.HandleFunc("/names", handlers.UniqueNames)
 
 	server := &http.Server{
 		Addr:              ":8080",
