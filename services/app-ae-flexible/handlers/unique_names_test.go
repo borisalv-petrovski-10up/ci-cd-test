@@ -1,6 +1,16 @@
 package handlers_test
 
-/*func TestRegisterUser(t *testing.T) {
+import (
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+
+	"github.com/borisalv-petrovski-10up/ci-cd-test/services/app-ae-flexible/handlers"
+)
+
+func TestUniqueNames(t *testing.T) {
 	// Arrange
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	res := httptest.NewRecorder()
@@ -10,4 +20,4 @@ package handlers_test
 
 	// Assert
 	assert.Equal(t, "Hello, [Samuel John Falcoooooooooooooo]!", res.Body.String())
-}*/
+}
