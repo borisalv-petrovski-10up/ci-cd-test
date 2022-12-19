@@ -21,4 +21,3 @@ func TestRegisterUser(t *testing.T) {
 	// Assert
 	assert.Equal(t, "Hello, [Samuel John Falcoooooooooooooo]!", res.Body.String())
 }
-
