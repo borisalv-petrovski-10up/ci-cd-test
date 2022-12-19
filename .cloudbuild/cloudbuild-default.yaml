@@ -1,6 +1,10 @@
 options:
   env:
     - "GOPATH=/go"
+    - "BRANCH_NAME=${BRANCH_NAME}"
+    - "COMMIT_SHA=${COMMIT_SHA}"
+    - "PROJECT_ID=${PROJECT_ID}"
+    - "CODECOV_TOKEN=ce852600-2555-4fe4-8c9f-4129b6884883"
   volumes:
     - name: go-modules-pkg
       path: /go/pkg
@@ -26,8 +30,7 @@ steps:
     args: ["golangci-lint", "run", "-v", "--build-tags", "test"]
 
   - id: go_test
-    name: "golang:1.19"
-    args: ["go", "test", "./..."]
+    name: "gcr.io/$PROJECT_ID/cloud-builders/tests-with-codecov"
 
   - id: go_security
     name: "securego/gosec"
