@@ -1,0 +1,22 @@
+coverage:
+  precision: 2
+  range: 80...100
+  round: down
+  status:
+    project:
+      unit:
+        if_not_found: failure
+        only_pulls: true
+        target: auto
+        threshold: 0.5%
+    patch:
+      unit:
+        target: 80%
+        threshold: 0%
+        if_not_found: failure
+        only_pulls: true
+        branches:
+          - master
+ignore:
+  - (?s:.*/main\.go.*)\Z
+  - (?s:.*/[^\/]+_test\.go.*)\Z
